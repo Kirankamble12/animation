@@ -1,55 +1,78 @@
 import { useRef } from 'react'
 import { useGSAP } from '@gsap/react';
 import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger'; 
 import './App.css'
+
+gsap.registerPlugin(ScrollTrigger);
 
 function App() {
   const container = useRef(); 
-
+  
   useGSAP(() => {
-    // Animation of the headline
-    gsap.from(".headline", {
-      y: 30,
-      opacity: 0,
-      duration: 1,
-      ease: "power3.out"
+    const tl = gsap.timeline({
+      scrollTrigger: {
+        trigger: ".hero-section",
+        start: "top top",   
+        end: "+=2000",      
+        scrub: 1,           
+        pin: true,          
+      }
     });
 
-    // 2. Animatation for statistic Statistics (STAGGERED REVEAL)
-    gsap.from(".stat-box", {
-      y: 20,          
-      opacity: 0,     
-      duration: 1,    
-      stagger: 0.2,  
-      delay: 0.5      
-    });
-  }, { scope: container }); 
+    // 1) Move the Box
+    tl.to(".scroll-box", {
+      x: "80vw",            
+      rotate: 360,
+      ease: "none"          
+    })
+    //reveling the text through box moving
+    .to(".reveal-content", {
+      clipPath: "inset(0% 0% 0% 0%)", 
+      ease: "none"
+    }, "<"); 
+
+  }, { scope: container });
+
   return (
-    <div ref={container} className='h-screen bg-zinc-950 flex flex-col items-center justify-center gap-10'>
+    <div ref={container} className='bg-zinc-950 text-white overflow-x-hidden'>
       
-      {/* The Headline */}
-      <h1 className="headline text-8xl font-bold text-white tracking-tight">
-        welcome traveler
-      </h1>
+      <section className="hero-section h-screen flex items-center px-10 relative overflow-hidden">
+        
+       
+        <div className="scroll-box w-40 h-40 bg-blue-600 rounded-2xl shadow-2xl z-20"></div>
 
-      {/* The Statistics  */}
-      <div className="flex gap-20">
-        <div className="stat-box text-center">
-          <h2 className="text-4xl font-bold text-blue-500">99%</h2>
-          <p className="text-zinc-500 text-xs uppercase tracking-widest">Efficiency</p>
+        {/* the invisibale text*/}
+        <div 
+          className="reveal-content absolute inset-0 flex flex-col items-center justify-center pointer-events-none"
+          style={{ clipPath: "inset(0% 100% 0% 0%)" }} // Starts clipped from the right
+        >
+          
+          <h1 className="headline text-8xl font-bold tracking-tight mb-10 text-center uppercase">
+            WELCOME ITZFIZZ
+          </h1>
+
+          <div className="flex gap-20">
+            <div className="stat-box text-center">
+              <h2 className="text-4xl font-bold text-blue-500">99%</h2>
+              <p className="text-zinc-500 text-xs uppercase tracking-widest font-bold">Efficiency</p>
+            </div>
+            <div className="stat-box text-center">
+              <h2 className="text-4xl font-bold text-blue-500">12k+</h2>
+              <p className="text-zinc-500 text-xs uppercase tracking-widest font-bold">Users</p>
+            </div>
+             <div className="stat-box text-center">
+              <h2 className="text-4xl font-bold text-blue-500">24/7</h2>
+              <p className="text-zinc-500 text-xs uppercase tracking-widest">Support</p>
+            </div>
+          </div>
+
         </div>
-        <div className="stat-box text-center">
-          <h2 className="text-4xl font-bold text-blue-500">12k+</h2>
-          <p className="text-zinc-500 text-xs uppercase tracking-widest">Users</p>
-        </div>
-        <div className="stat-box text-center">
-          <h2 className="text-4xl font-bold text-blue-500">24/7</h2>
-          <p className="text-zinc-500 text-xs uppercase tracking-widest">Support</p>
-        </div>
-      </div>
-      
+      </section>
+
+      <div className="h-screen opacity-0"></div>
     </div>
   )
 }
 
-export default App
+export default App;
